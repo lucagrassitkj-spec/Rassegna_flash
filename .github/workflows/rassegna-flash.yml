@@ -1,0 +1,39 @@
+name: Rassegna Flash Debug
+
+on:
+  schedule:
+    - cron: "0 5 * * *"  # 07:00 Europe/Rome
+  workflow_dispatch:
+
+jobs:
+  rassegna:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run summarizer
+        run: python rss_summarizer.py
+
+      - name: Show output files
+        run: cat output/*.txt || echo "No output generated"
+
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        with:
+          name: rassegna-flash
+          path: output/*.txt
+
+      - name: Send to Telegram
+        run: |
+          for file in output/*.txt; do
+            curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage               -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }}               -d text="$(cat $file | head -c 3900)"
+          done
