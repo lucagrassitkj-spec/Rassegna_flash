@@ -46,10 +46,14 @@ jobs:
 Titolo: Articolo di test
 Contenuto: Questo articolo serve solo per testare la ricezione su Telegram.
 
-      # Debug: verifica presenza file
-      - name: Debug: list files in output
+            - name: Debug: list files in output
         run: |
           ls -l output || echo "La cartella output non esiste"
+
+      - name: Debug: show content of test file
+        run: |
+          cat output/test_article.txt || echo "File test_article.txt non trovato"
+
 
       - name: Debug: show content of test file
         run: |
