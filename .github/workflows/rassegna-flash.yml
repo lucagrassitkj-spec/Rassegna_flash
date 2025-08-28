@@ -34,28 +34,3 @@ jobs:
         with:
           name: rassegna-flash
           path: output/*.txt
-
-      - name: Create test article for manual dispatch
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          mkdir -p output
-          echo "Titolo: Articolo di test" > output/test_article.txt
-          echo "Contenuto: Questo articolo serve solo per testare la ricezione su Telegram." >> output/test_article.txt
-
-      - name: Debug: list files in output
-        run: |
-          echo "Contenuto della cartella output:"
-          ls -l output || echo "La cartella output non esiste"
-
-      - name: Debug: show content of test file
-        run: |
-          cat output/test_article.txt || echo "File test_article.txt non trovato"
-
-      - name: Send to Telegram
-        run: |
-          for file in output/*.txt; do
-            echo "Invio file $file a Telegram..."
-            curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-              -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-              -d text="$(head -c 3900 $file)"
-          done
