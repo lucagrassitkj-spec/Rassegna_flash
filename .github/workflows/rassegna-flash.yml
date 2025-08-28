@@ -24,10 +24,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run summarizer
-        run: python rss_summarizer.py
+        run: |
+          python rss_summarizer.py
 
       - name: Show output files
-        run: cat output/*.txt || echo "No output generated"
+        run: |
+          cat output/*.txt || echo "No output generated"
 
       - name: Upload results
         uses: actions/upload-artifact@v4
@@ -40,8 +42,10 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p output
-          echo "Titolo: Articolo di test" > output/test_article.txt
-          echo "Contenuto: Questo articolo serve solo per testare la ricezione su Telegram." >> output/test_article.txt
+          cat <<EOF > output/test_article.txt
+Titolo: Articolo di test
+Contenuto: Questo articolo serve solo per testare la ricezione su Telegram.
+EOF
 
       # Debug: verifica presenza file
       - name: Debug: list files in output
@@ -49,7 +53,8 @@ jobs:
           ls -l output || echo "La cartella output non esiste"
 
       - name: Debug: show content of test file
-        run: cat output/test_article.txt || echo "File test_article.txt non trovato"
+        run: |
+          cat output/test_article.txt || echo "File test_article.txt non trovato"
 
       # Invio a Telegram
       - name: Send to Telegram
