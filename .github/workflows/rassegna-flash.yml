@@ -42,6 +42,11 @@ jobs:
           echo "Titolo: Articolo di test" > output/test_article.txt
           echo "Contenuto: Questo articolo serve solo per testare la ricezione su Telegram." >> output/test_article.txt
 
+- name: Debug: list files in output
+  run: |
+    echo "Contenuto della cartella output:"
+    ls -l output || echo "La cartella output non esiste"
+
       - name: Send to Telegram
         run: |
           for file in output/*.txt; do
