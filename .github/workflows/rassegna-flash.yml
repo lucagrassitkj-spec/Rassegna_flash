@@ -45,7 +45,6 @@ jobs:
           cat <<EOF > output/test_article.txt
 Titolo: Articolo di test
 Contenuto: Questo articolo serve solo per testare la ricezione su Telegram.
-EOF
 
       # Debug: verifica presenza file
       - name: Debug: list files in output
