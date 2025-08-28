@@ -34,19 +34,21 @@ jobs:
       - name: Show output files
         run: cat output/*.txt || echo "No output generated"
 
-      # 6. Upload dei file come artifact
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        with:
-          name: rassegna-flash
-          path: output/*.txt
-
-      # 7. Invio dei file su Telegram
-      - name: Send results to Telegram
+      # 6. Invio dei file come messaggi di testo su Telegram
+      - name: Send results as Telegram message
         run: |
           for file in output/*.txt; do
-            echo "Invio $file a Telegram..."
-            curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument \
-              -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-              -F document=@"$file" || echo "Invio fallito per $file"
+            echo "Invio contenuto di $file a Telegram..."
+            # Spezza il file in blocchi di massimo 4000 caratteri
+            awk '{ 
+              buffer = buffer $0 "\n";
+              if (length(buffer) > 4000) {
+                print buffer;
+                buffer="";
+              } 
+            } END { print buffer }' "$file" | while read -r chunk; do
+              curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+                -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+                -d text="$chunk" || echo "Invio fallito per un blocco di $file"
+            done
           done
