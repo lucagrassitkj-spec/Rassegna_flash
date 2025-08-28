@@ -1,0 +1,21 @@
+categories:
+  - name: Politica internazionale
+    feeds:
+      - https://www.ilpost.it/feed/
+      - https://www.internazionale.it/feed
+      - https://www.politico.com/rss/politics08.xml
+      - https://www.foreignaffairs.com/rss.xml
+
+  - name: AI e Tech
+    feeds:
+      - https://www.technologyreview.com/feed/
+      - https://www.theverge.com/rss/index.xml
+      - https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml
+
+  - name: Antropologia e Scienze sociali
+    feeds:
+      - https://www.scientificamerican.com/feed/
+      - https://journals.sagepub.com/action/showFeed?type=etoc&feed=rss&jc=soia
+      - https://www.cambridge.org/core/rss/product/id/antropology
+lookback_hours: 24
+max_per_category: 3
