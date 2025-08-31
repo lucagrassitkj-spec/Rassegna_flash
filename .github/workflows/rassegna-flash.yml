@@ -34,21 +34,18 @@ jobs:
       - name: Show output files
         run: cat output/*.txt || echo "No output generated"
 
-      # 6. Invio dei file come messaggi di testo su Telegram
-      - name: Send results as Telegram message
+      # 6. Invio dei link con preview a Telegram (solo righe contenenti link)
+      - name: Send only links with preview to Telegram
         run: |
           for file in output/*.txt; do
-            echo "Invio contenuto di $file a Telegram..."
-            # Spezza il file in blocchi di massimo 4000 caratteri
-            awk '{ 
-              buffer = buffer $0 "\n";
-              if (length(buffer) > 4000) {
-                print buffer;
-                buffer="";
-              } 
-            } END { print buffer }' "$file" | while read -r chunk; do
-              curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-                -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-                -d text="$chunk" || echo "Invio fallito per un blocco di $file"
-            done
+            echo "Invio solo link con preview da $file a Telegram..."
+            while IFS= read -r line; do
+              # Invia solo righe che contengono un link
+              if [[ "$line" =~ ^https?:// ]]; then
+                curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+                  -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+                  -d text="$line"
+                sleep 2
+              fi
+            done < "$file"
           done
